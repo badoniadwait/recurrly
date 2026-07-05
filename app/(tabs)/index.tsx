@@ -1,11 +1,12 @@
 import { Link } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   console.log("at Index");
   return (
-    <View className="flex-1 items-center justify-center bg-white p-5">
+    <SafeAreaView className="flex-1 bg-background p-5">
       <Text className="text-2xl font-bold text-gray-900">
         Welcome to NativeWind
       </Text>
@@ -19,6 +20,6 @@ export default function Index() {
       <Link href={"/(tabs)/insights"} className="mt-4 rounded bg-slate-500 text-black">Insights</Link>
       <Link href={"/(tabs)/subscriptions"} className="mt-4 rounded bg-slate-500 text-black">subscriptions</Link>
       <Link href={"/(tabs)/settings"} className="mt-4 rounded bg-slate-500 text-black">settings</Link>
-    </View>
+    </SafeAreaView>
   );
 }
