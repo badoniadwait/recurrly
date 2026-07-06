@@ -12,7 +12,7 @@ export default function SubscriptionDetails() {
             <Text>
                 SubscriptionsDetails: {id}
             </Text>
-            <Link href={"/index"}> go back</Link>
+            <Link href={"/(tabs)"}> go back</Link>
         </SafeAreaView>
     )
     
