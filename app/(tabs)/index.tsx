@@ -1,6 +1,6 @@
+import { useUser } from "@clerk/clerk-expo";
 import { HOME_BALANCE, HOME_SUBSCRIPTIONS, HOME_USER, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
-import images from "@/constants/images";
 import { formatCurrency } from "@/lib/utils";
 import React, { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
@@ -12,6 +12,7 @@ import UpcomingSubscriptionsCard from "@/components/UpcomingSubscriptionsCard";
 import dayjs from "dayjs";
 
 export default function Index() {
+  const { user } = useUser();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
   console.log("at Index");
   return (
@@ -23,9 +24,13 @@ export default function Index() {
             <>
               <View className="home-header">
                 <View className="home-user">
-                  <Image className="home-avatar" source={images.avatar}></Image>
+                  <View className="home-avatar items-center justify-center bg-accent">
+                    <Text className="text-2xl font-sans-bold text-white">
+                      {(user?.fullName || HOME_USER.name).split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
+                    </Text>
+                  </View>
                   <Text className="home-user-name">
-                      {HOME_USER.name}
+                      {user?.fullName || HOME_USER.name}
                   </Text>
                 </View>
 
@@ -79,7 +84,7 @@ export default function Index() {
         renderItem={
           ({item}) => (
             <SubscriptionCard 
-              data={item}
+              {...item}
               expanded={expandedSubscriptionId === item.id}
               onPress={() => setExpandedSubscriptionId((currentId) => (currentId === item.id ? null : item.id))}
             ></SubscriptionCard>
