@@ -1,9 +1,11 @@
 import "@/app/global.css";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
-import React, { useEffect } from "react";
+import { SplashScreen, Stack, usePathname, useGlobalSearchParams } from "expo-router";
+import React, { useEffect, useRef } from "react";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@/lib/token-cache";
+import { PostHogProvider } from "posthog-react-native";
+import { posthog } from "@/src/config/posthog";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -19,20 +21,44 @@ export default function RootLayout() {
     semibold: require("../assets/fonts/PlusJakartaSans-SemiBold.ttf"),
   });
 
+  const pathname = usePathname();
+  const params = useGlobalSearchParams();
+  const previousPathname = useRef<string | undefined>(undefined);
+
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
+  useEffect(() => {
+    if (previousPathname.current !== pathname) {
+      posthog.screen(pathname, {
+        previous_screen: previousPathname.current ?? null,
+        ...params,
+      });
+      previousPathname.current = pathname;
+    }
+  }, [pathname, params]);
+
   if (!fontsLoaded) return null;
 
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      </Stack>
+      <PostHogProvider
+        client={posthog}
+        autocapture={{
+          captureScreens: false,
+          captureTouches: true,
+          propsToCapture: ["testID"],
+          maxElementsCaptured: 20,
+        }}
+      >
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        </Stack>
+      </PostHogProvider>
     </ClerkProvider>
   );
 }

@@ -3,9 +3,11 @@ import { Link, router } from "expo-router";
 import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { usePostHog } from "posthog-react-native";
 
 export default function SignIn() {
   const { signIn, setActive, isLoaded } = useSignIn();
+  const posthog = usePostHog();
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
@@ -20,9 +22,13 @@ export default function SignIn() {
         password,
       });
       await setActive({ session: completeSignIn.createdSessionId });
+      posthog.identify(emailAddress);
+      posthog.capture("user_signed_in");
       router.replace("/(tabs)");
     } catch (err: any) {
-      setError(err.errors?.[0]?.longMessage || "Something went wrong");
+      const message = err.errors?.[0]?.longMessage || "Something went wrong";
+      setError(message);
+      posthog.capture("user_sign_in_failed", { error_message: message });
     }
   };
 

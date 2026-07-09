@@ -3,9 +3,11 @@ import { Link, router } from "expo-router";
 import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { usePostHog } from "posthog-react-native";
 
 export default function SignUp() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const posthog = usePostHog();
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [emailAddress, setEmailAddress] = React.useState("");
@@ -23,7 +25,9 @@ export default function SignUp() {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setPendingVerification(true);
     } catch (err: any) {
-      setError(err.errors?.[0]?.longMessage || "Something went wrong");
+      const message = err.errors?.[0]?.longMessage || "Something went wrong";
+      setError(message);
+      posthog.capture("user_sign_up_failed", { error_message: message });
     }
   };
 
@@ -32,8 +36,14 @@ export default function SignUp() {
     setError("");
 
     try {
+      posthog.capture("email_verification_submitted");
       const completeSignUp = await signUp.attemptEmailAddressVerification({ code });
       await setActive({ session: completeSignUp.createdSessionId });
+      posthog.identify(emailAddress, {
+        $set: { first_name: firstName, last_name: lastName },
+        $set_once: { signed_up_at: new Date().toISOString() },
+      });
+      posthog.capture("user_signed_up");
       router.replace("/(tabs)");
     } catch (err: any) {
       setError(err.errors?.[0]?.longMessage || "Something went wrong");

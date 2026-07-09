@@ -2,10 +2,12 @@ import { useAuth, useUser } from "@clerk/clerk-expo";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { usePostHog } from "posthog-react-native";
 
 export default function Settings() {
   const { signOut } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
+  const posthog = usePostHog();
 
   if (!isLoaded || !isSignedIn) {
     return null;
@@ -30,7 +32,7 @@ export default function Settings() {
       </View>
 
       <View className="mt-auto pb-5">
-        <TouchableOpacity className="items-center rounded-2xl bg-destructive py-4" onPress={() => signOut()}>
+        <TouchableOpacity className="items-center rounded-2xl bg-destructive py-4" onPress={() => { posthog.capture("user_signed_out"); posthog.reset(); signOut(); }}>
           <Text className="text-base font-sans-bold text-white">Sign Out</Text>
         </TouchableOpacity>
       </View>
