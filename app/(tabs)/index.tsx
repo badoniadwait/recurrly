@@ -1,12 +1,14 @@
-import { useUser } from "@clerk/clerk-expo";
-import { HOME_BALANCE, HOME_SUBSCRIPTIONS, HOME_USER, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
+import { HOME_BALANCE, HOME_USER, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
+import { useSubscriptions } from "@/lib/subscriptions-context";
 import { formatCurrency } from "@/lib/utils";
-import React, { useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useUser } from "@clerk/clerk-expo";
 import { usePostHog } from "posthog-react-native";
+import React, { useState } from "react";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
+import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
 import ListHeading from "@/components/ListHeading";
 import SubscriptionCard from "@/components/SubscriptionCard";
 import UpcomingSubscriptionsCard from "@/components/UpcomingSubscriptionsCard";
@@ -15,12 +17,15 @@ import dayjs from "dayjs";
 export default function Index() {
   const { user } = useUser();
   const posthog = usePostHog();
+  const { subscriptions, addSubscription } = useSubscriptions();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   console.log("at Index");
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
 
           <FlatList
+          showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           () => (
             <>
@@ -36,9 +41,9 @@ export default function Index() {
                   </Text>
                 </View>
 
-                <View>
-                  <Image source={icons.add} className="home-add-icon"></Image>
-                </View>
+                <Pressable onPress={() => setIsCreateModalVisible(true)}>
+                  <Image source={icons.add} className="home-add-icon" />
+                </Pressable>
 
               </View>
 
@@ -82,7 +87,7 @@ export default function Index() {
             </>
           )
         }
-        data={HOME_SUBSCRIPTIONS}
+        data={subscriptions}
         renderItem={
           ({item}) => (
             <SubscriptionCard
@@ -112,6 +117,12 @@ export default function Index() {
           () => <View className="h-4"/>
         }
         contentContainerClassName="pb-30"
+        />
+
+        <CreateSubscriptionModal
+          visible={isCreateModalVisible}
+          onClose={() => setIsCreateModalVisible(false)}
+          onCreate={addSubscription}
         />
 
     </SafeAreaView>

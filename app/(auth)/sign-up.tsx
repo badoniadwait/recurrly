@@ -1,7 +1,7 @@
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, router } from "expo-router";
 import React from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePostHog } from "posthog-react-native";
 
@@ -59,8 +59,16 @@ export default function SignUp() {
   if (pendingVerification) {
     return (
       <SafeAreaView className="auth-safe-area">
-        <View className="auth-screen">
-          <View className="auth-scroll">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          className="flex-1"
+        >
+          <ScrollView
+            className="auth-scroll"
+            keyboardShouldPersistTaps="handled"
+            bounces={false}
+            contentContainerStyle={{ flexGrow: 1 }}
+          >
             <View className="auth-content">
               <View className="auth-brand-block">
                 <View className="auth-logo-wrap">
@@ -102,16 +110,24 @@ export default function SignUp() {
                 </View>
               </View>
             </View>
-          </View>
-        </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView className="auth-safe-area">
-      <View className="auth-screen">
-        <View className="auth-scroll">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        className="flex-1"
+      >
+        <ScrollView
+          className="auth-scroll"
+          keyboardShouldPersistTaps="handled"
+          bounces={false}
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
           <View className="auth-content">
             <View className="auth-brand-block">
               <View className="auth-logo-wrap">
@@ -196,8 +212,8 @@ export default function SignUp() {
               </View>
             </View>
           </View>
-        </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
