@@ -46,7 +46,7 @@ We've built a dashboard and insights for you to monitor user behavior:
 - [ ] Run a full production build (the wizard only verified the files it touched) and fix any lint or type errors introduced by the generated code.
 - [ ] Run the test suite — call sites that were rewritten or instrumented may need updated mocks or fixtures.
 - [ ] Add `POSTHOG_PROJECT_TOKEN` and `POSTHOG_HOST` to `.env.example` and any onboarding scripts so collaborators know what to set.
-- [ ] Confirm the returning-visitor path also calls `identify` — currently `identify` is only called on fresh login/signup. If Clerk restores a session silently (e.g. via `useAuth` on app resume), add an `identify` call there too so returning sessions are not left on anonymous distinct IDs.
+- [x] Confirm the returning-visitor path also calls `identify` — currently `identify` is only called on fresh login/signup. If Clerk restores a session silently (e.g. via `useAuth` on app resume), add an `identify` call there too so returning sessions are not left on anonymous distinct IDs.
 
 ### Agent skill
 

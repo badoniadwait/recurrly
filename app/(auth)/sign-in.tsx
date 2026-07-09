@@ -21,8 +21,21 @@ export default function SignIn() {
         identifier: emailAddress,
         password,
       });
+
+      if (completeSignIn.status !== "complete") {
+        setError("Additional verification required");
+        return;
+      }
+
+      if (!completeSignIn.createdSessionId) {
+        setError("No session created");
+        return;
+      }
+
       await setActive({ session: completeSignIn.createdSessionId });
-      posthog.identify(emailAddress);
+      posthog.identify(completeSignIn.createdSessionId, {
+        $set: { email: emailAddress },
+      });
       posthog.capture("user_signed_in");
       router.replace("/(tabs)");
     } catch (err: any) {

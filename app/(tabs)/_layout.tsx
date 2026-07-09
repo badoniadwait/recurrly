@@ -1,9 +1,9 @@
 import { useAuth } from "@clerk/clerk-expo";
-import { Tabs, router } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { tabs } from "@/constants/data";
 import { colors, components } from "@/constants/theme";
 import clsx from "clsx";
-import React, { useEffect } from "react";
+import React from "react";
 import { Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -13,14 +13,12 @@ export default function TabsLayout() {
   const { isLoaded, isSignedIn } = useAuth();
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.replace("/(auth)/sign-in");
-    }
-  }, [isLoaded, isSignedIn]);
-
-  if (!isLoaded || !isSignedIn) {
+  if (!isLoaded) {
     return null;
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/sign-in" />;
   }
 
   const TabIcon = ({ focused, icon }: TabIconProps) => {

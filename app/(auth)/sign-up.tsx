@@ -38,9 +38,15 @@ export default function SignUp() {
     try {
       posthog.capture("email_verification_submitted");
       const completeSignUp = await signUp.attemptEmailAddressVerification({ code });
+
+      if (completeSignUp.status !== "complete" || !completeSignUp.createdSessionId) {
+        setError("Verification incomplete");
+        return;
+      }
+
       await setActive({ session: completeSignUp.createdSessionId });
-      posthog.identify(emailAddress, {
-        $set: { first_name: firstName, last_name: lastName },
+      posthog.identify(completeSignUp.createdSessionId, {
+        $set: { email: emailAddress, first_name: firstName, last_name: lastName },
         $set_once: { signed_up_at: new Date().toISOString() },
       });
       posthog.capture("user_signed_up");
