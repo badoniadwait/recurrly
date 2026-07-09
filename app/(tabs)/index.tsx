@@ -1,11 +1,11 @@
-import { useUser } from "@clerk/clerk-expo";
 import { HOME_BALANCE, HOME_SUBSCRIPTIONS, HOME_USER, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
 import { formatCurrency } from "@/lib/utils";
-import React, { useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useUser } from "@clerk/clerk-expo";
 import { usePostHog } from "posthog-react-native";
+import React, { useState } from "react";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import ListHeading from "@/components/ListHeading";
 import SubscriptionCard from "@/components/SubscriptionCard";
@@ -16,11 +16,13 @@ export default function Index() {
   const { user } = useUser();
   const posthog = usePostHog();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+  const [subscriptions, setSubscriptions] = useState(HOME_SUBSCRIPTIONS);
   console.log("at Index");
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
 
           <FlatList
+          showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           () => (
             <>
@@ -36,9 +38,9 @@ export default function Index() {
                   </Text>
                 </View>
 
-                <View>
-                  <Image source={icons.add} className="home-add-icon"></Image>
-                </View>
+                <Pressable>
+                  <Image source={icons.add} className="home-add-icon" />
+                </Pressable>
 
               </View>
 
@@ -82,7 +84,7 @@ export default function Index() {
             </>
           )
         }
-        data={HOME_SUBSCRIPTIONS}
+        data={subscriptions}
         renderItem={
           ({item}) => (
             <SubscriptionCard
