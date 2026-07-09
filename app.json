@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Recurrly",
-    "slug": "Recurrly",
+    "slug": "recurrly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,7 +22,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.badoniadwait.recurrly"
     },
     "web": {
       "bundler": "metro",
@@ -32,19 +33,30 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      ["expo-font", {
-        "fonts" : [
-          "./assets/fonts/PlusJakartaSans-Bold.ttf",
-          "./assets/fonts/PlusJakartaSans-Extra-Bold.ttf",
-          "./assets/fonts/PlusJakartaSans-Medium.ttf",
-          "./assets/fonts/PlusJakartaSans-Light.ttf",
-          "./assets/fonts/PlusJakartaSans-Regular.ttf",
-          "./assets/fonts/PlusJakartaSans-SemiBold.ttf"
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/PlusJakartaSans-Bold.ttf",
+            "./assets/fonts/PlusJakartaSans-ExtraBold.ttf",
+            "./assets/fonts/PlusJakartaSans-Medium.ttf",
+            "./assets/fonts/PlusJakartaSans-Light.ttf",
+            "./assets/fonts/PlusJakartaSans-Regular.ttf",
+            "./assets/fonts/PlusJakartaSans-SemiBold.ttf"
+          ]
+        }
       ]
-      }]
-    ], 
-      "experiments": {
-        "typedRoutes": true
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "posthogHost": "https://us.i.posthog.com",
+      "router": {},
+      "eas": {
+        "projectId": "fcd4265a-5961-4e6a-8fe3-c2b6cdc6fe74"
       }
+    },
+    "owner": "badoniadwait"
   }
 }
