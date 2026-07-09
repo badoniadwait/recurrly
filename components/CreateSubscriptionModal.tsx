@@ -116,7 +116,12 @@ const CreateSubscriptionModal = ({
                 <View className="modal-container">
                     <View className="modal-header">
                         <Text className="modal-title">New Subscription</Text>
-                        <Pressable className="modal-close" onPress={handleClose}>
+                        <Pressable
+                            className="modal-close"
+                            accessibilityRole="button"
+                            accessibilityLabel="Close new subscription modal"
+                            onPress={handleClose}
+                        >
                             <Text className="modal-close-text">x</Text>
                         </Pressable>
                     </View>
@@ -165,6 +170,9 @@ const CreateSubscriptionModal = ({
                                                 "picker-option",
                                                 isActive && "picker-option-active"
                                             )}
+                                            accessibilityRole="button"
+                                            accessibilityLabel={`Select ${option.toLowerCase()} frequency`}
+                                            accessibilityState={{ selected: isActive }}
                                             onPress={() => setFrequency(option)}
                                         >
                                             <Text
@@ -194,6 +202,9 @@ const CreateSubscriptionModal = ({
                                                 "category-chip",
                                                 isActive && "category-chip-active"
                                             )}
+                                            accessibilityRole="button"
+                                            accessibilityLabel={`Select ${option} category`}
+                                            accessibilityState={{ selected: isActive }}
                                             onPress={() => setCategory(option)}
                                         >
                                             <Text
@@ -214,6 +225,8 @@ const CreateSubscriptionModal = ({
 
                         <Pressable
                             className={clsx("auth-button", !isValid && "auth-button-disabled")}
+                            accessibilityRole="button"
+                            accessibilityLabel="Create subscription"
                             onPress={handleSubmit}
                         >
                             <Text className="auth-button-text">Create Subscription</Text>
