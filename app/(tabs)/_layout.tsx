@@ -2,6 +2,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import { Redirect, Tabs } from "expo-router";
 import { tabs } from "@/constants/data";
 import { colors, components } from "@/constants/theme";
+import { SubscriptionsProvider } from "@/lib/subscriptions-context";
 import clsx from "clsx";
 import React from "react";
 import { Image, View } from "react-native";
@@ -32,7 +33,8 @@ export default function TabsLayout() {
   };
 
   return (
-    <Tabs
+    <SubscriptionsProvider>
+      <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
@@ -68,6 +70,7 @@ export default function TabsLayout() {
           />
         );
       })}
-    </Tabs>
+      </Tabs>
+    </SubscriptionsProvider>
   );
 }

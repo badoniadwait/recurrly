@@ -1,5 +1,5 @@
 import SubscriptionCard from "@/components/SubscriptionCard";
-import { HOME_SUBSCRIPTIONS } from "@/constants/data";
+import { useSubscriptions } from "@/lib/subscriptions-context";
 import { usePostHog } from "posthog-react-native";
 import React, { useMemo, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, Text, TextInput, View } from "react-native";
@@ -8,18 +8,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Subscriptions() {
     const [search, setSearch] = useState("");
     const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
+    const { subscriptions } = useSubscriptions();
     const posthog = usePostHog();
 
     const filteredSubscriptions = useMemo(() => {
-        if (!search.trim()) return HOME_SUBSCRIPTIONS;
+        if (!search.trim()) return subscriptions;
         const q = search.toLowerCase().trim();
-        return HOME_SUBSCRIPTIONS.filter(
+        return subscriptions.filter(
             (sub) =>
                 sub.name.toLowerCase().includes(q) ||
                 sub.category?.toLowerCase().includes(q) ||
                 sub.plan?.toLowerCase().includes(q)
         );
-    }, [search]);
+    }, [search, subscriptions]);
 
     return (
         <SafeAreaView className="flex-1 bg-background p-5">
