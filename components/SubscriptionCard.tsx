@@ -3,7 +3,7 @@ import clsx from "clsx";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
-const SubscriptionCard = ( {data:{name,startDate, price, status , currency, icon, billing, color, category, plan, renewalDate, paymentMethod}, onPress, expanded}: SubscriptionCardProps ) => {
+const SubscriptionCard = ( {name,startDate, price, status , currency, icon, billing, color, category, plan, renewalDate, paymentMethod, onPress, expanded}: SubscriptionCardProps ) => {
     return (
         <Pressable onPress={onPress} className={clsx("sub-card",expanded? 'sub-card-expanded' : "bg-card")} style={!expanded &&color? {backgroundColor: color} : undefined} >
             <View className="sub-head">
@@ -14,7 +14,7 @@ const SubscriptionCard = ( {data:{name,startDate, price, status , currency, icon
                             {name}
                         </Text>
                         <Text numberOfLines={1} ellipsizeMode="tail" className="sub-meta">
-                            {category?.trim() || plan?.trim() ||(renewalDate?formatSubscriptionDateTime(renewalDate) : '')}
+                            {category?.trim() || plan?.trim() || formatSubscriptionDateTime(renewalDate)}
                         </Text>
                     </View>
                 </View>
@@ -43,7 +43,7 @@ const SubscriptionCard = ( {data:{name,startDate, price, status , currency, icon
                                 Category:
                             </Text>
                             <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
-                                {category?.trim() || plan.trim()}
+                                {category?.trim() || plan?.trim()}
                             </Text>
                             </View>
                         </View>
@@ -53,7 +53,7 @@ const SubscriptionCard = ( {data:{name,startDate, price, status , currency, icon
                                 Started:
                             </Text>
                             <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
-                                {startDate?formatSubscriptionDateTime(startDate) : '' }
+                                {formatSubscriptionDateTime(startDate)}
                             </Text>
                             </View>
                         </View>
@@ -63,7 +63,7 @@ const SubscriptionCard = ( {data:{name,startDate, price, status , currency, icon
                                 renewalDate:
                             </Text>
                             <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
-                                {renewalDate?formatSubscriptionDateTime(renewalDate) : ''}
+                                {formatSubscriptionDateTime(renewalDate)}
                             </Text>
                             </View>
                         </View>
@@ -73,7 +73,7 @@ const SubscriptionCard = ( {data:{name,startDate, price, status , currency, icon
                                 Status:
                             </Text>
                             <Text className="sub-value" numberOfLines={1} ellipsizeMode="tail">
-                                {status?formatStatusLabel(status) : ''}
+                                {status ? formatStatusLabel(status) : "Not provided"}
                             </Text>
                             </View>
                         </View>

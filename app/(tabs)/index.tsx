@@ -1,10 +1,11 @@
+import { useUser } from "@clerk/clerk-expo";
 import { HOME_BALANCE, HOME_SUBSCRIPTIONS, HOME_USER, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
-import images from "@/constants/images";
 import { formatCurrency } from "@/lib/utils";
 import React, { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { usePostHog } from "posthog-react-native";
 
 import ListHeading from "@/components/ListHeading";
 import SubscriptionCard from "@/components/SubscriptionCard";
@@ -12,6 +13,8 @@ import UpcomingSubscriptionsCard from "@/components/UpcomingSubscriptionsCard";
 import dayjs from "dayjs";
 
 export default function Index() {
+  const { user } = useUser();
+  const posthog = usePostHog();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
   console.log("at Index");
   return (
@@ -23,9 +26,13 @@ export default function Index() {
             <>
               <View className="home-header">
                 <View className="home-user">
-                  <Image className="home-avatar" source={images.avatar}></Image>
+                  <View className="home-avatar items-center justify-center bg-accent">
+                    <Text className="text-2xl font-sans-bold text-white">
+                      {(user?.fullName || HOME_USER.name).split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
+                    </Text>
+                  </View>
                   <Text className="home-user-name">
-                      {HOME_USER.name}
+                      {user?.fullName || HOME_USER.name}
                   </Text>
                 </View>
 
@@ -78,10 +85,19 @@ export default function Index() {
         data={HOME_SUBSCRIPTIONS}
         renderItem={
           ({item}) => (
-            <SubscriptionCard 
-              data={item}
+            <SubscriptionCard
+              {...item}
               expanded={expandedSubscriptionId === item.id}
-              onPress={() => setExpandedSubscriptionId((currentId) => (currentId === item.id ? null : item.id))}
+              onPress={() => {
+                const isExpanding = expandedSubscriptionId !== item.id;
+                setExpandedSubscriptionId((currentId) => (currentId === item.id ? null : item.id));
+                if (isExpanding) {
+                  posthog.capture("subscription_card_expanded", {
+                    subscription_id: item.id,
+                    subscription_name: item.name,
+                  });
+                }
+              }}
             ></SubscriptionCard>
           )
         }
